@@ -12,7 +12,7 @@ public interface PasswordValidatorSpec {
 
     boolean isCommonPassword(String password);
 
-    boolean containsSpecialChar(String password, String allowed);
+    boolean containsSpecialChar(String password);
 
     boolean isValid(String password);
 }

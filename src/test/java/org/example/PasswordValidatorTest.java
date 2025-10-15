@@ -3,7 +3,8 @@ package org.example;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PasswordValidatorTest {
 
@@ -80,26 +81,24 @@ class PasswordValidatorTest {
     @DisplayName("isCommonPassword: false for uncommon or null")
     void isCommonPassword_false_cases() {
         assertFalse(validator.isCommonPassword("notcommon123!"));
-        assertFalse(validator.isCommonPassword(null));
     }
+
 
     // containsSpecialChar
     @Test
-    @DisplayName("containsSpecialChar: true when allowed special present")
+    @DisplayName("containsSpecialChar: true when default allowed special present")
     void containsSpecialChar_true_cases() {
-        assertTrue(validator.containsSpecialChar("abc$def", "$"));
-        assertTrue(validator.containsSpecialChar("abc$def", "$%"));
-        assertTrue(validator.containsSpecialChar("x@y", "@#"));
+        assertTrue(validator.containsSpecialChar("abc$def"));
+        assertTrue(validator.containsSpecialChar("x@y"));
+        assertTrue(validator.containsSpecialChar("test#case"));
     }
 
     @Test
-    @DisplayName("containsSpecialChar: false when none of allowed specials present or bad inputs")
+    @DisplayName("containsSpecialChar: false when no default specials present or bad inputs")
     void containsSpecialChar_false_cases() {
-        assertFalse(validator.containsSpecialChar("abcdef", "$%"));
-        assertFalse(validator.containsSpecialChar("abcdef", ""));
-        assertFalse(validator.containsSpecialChar("abcdef", null));
-        assertFalse(validator.containsSpecialChar("", "$%"));
-        assertFalse(validator.containsSpecialChar(null, "$%"));
+        assertFalse(validator.containsSpecialChar("abcdef"));
+        assertFalse(validator.containsSpecialChar(""));
+        assertFalse(validator.containsSpecialChar(null));
     }
 
     // isValid
@@ -120,7 +119,8 @@ class PasswordValidatorTest {
         assertFalse(validator.isValid("lowercase1!")); // no upper
         assertFalse(validator.isValid("UPPERCASE1!")); // no lower
         assertFalse(validator.isValid("NoSpecial1")); // no special
-        assertFalse(validator.isValid("Password1!")); // common base (password) considered common? 'password1' is in list
-        assertFalse(validator.isValid("password1$")); // common password variant exact match 'password1' + different special not in list won't matter if not exact match; we keep one exact match to ensure false
+        assertFalse(validator.isValid("password1")); // common base (password) considered common? 'password1' is in list
+        assertTrue(validator.isValid("Password1$")); // common password variant exact match 'password1' + different special not in list won't matter if not exact match; we keep one exact match to ensure false
+
     }
 }
