@@ -10,7 +10,7 @@ public final class PasswordValidator implements PasswordValidatorSpec {
 
 
     @Override
-    public boolean hasMinLength(String password, int min) {
+    public boolean hasMinLength(String password) {
         return false;
     }
 
@@ -19,6 +19,7 @@ public final class PasswordValidator implements PasswordValidatorSpec {
         return false;
     }
 
+    
     @Override
     public boolean containsUpperAndLower(String password) {
         return false;

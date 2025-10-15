@@ -4,7 +4,7 @@ package org.example;
  * Interface for password validation rules.
  */
 public interface PasswordValidatorSpec {
-    boolean hasMinLength(String password, int min);
+    boolean hasMinLength(String password);
 
     boolean containsDigit(String password);
 
