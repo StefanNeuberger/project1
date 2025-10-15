@@ -39,7 +39,8 @@ Wähle eine der folgenden Möglichkeiten:
 
 - Kompilieren (ggf. ohne Tests): `mvn -q -DskipTests compile`
 - Starten:
-    - `java -cp target/classes org.example.Main`
+    - `java -cp target/classes org.example.Main` oder
+    - `mvn exec:java -Dexec.mainClass="org.example.Main"`
 
 Bei Start erscheint eine Eingabeaufforderung:
 
