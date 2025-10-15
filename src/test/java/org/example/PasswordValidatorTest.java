@@ -9,9 +9,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class PasswordValidatorTest {
 
     final int minLength = 8;
-    final String allowedSpecialChars = "!@#$%^&*()_+-=[]{}|;:'\"`,.<>/?~\\";
+    final String allowedSpecialChars = "!@#$%^&*()";
+    final boolean needsUppercase = true;
+    final boolean needsDigits = true;
+    final boolean needsLowercase = true;
 
-    private final PasswordValidator validator = new PasswordValidator(minLength, allowedSpecialChars);
+    private final PasswordValidator validator = new PasswordValidator(minLength, allowedSpecialChars, needsUppercase, needsDigits, needsLowercase);
 
     // hasMinLength
     @Test
@@ -126,4 +129,13 @@ class PasswordValidatorTest {
         assertTrue(validator.isValid("Password1$")); // common password variant exact match 'password1' + different special not in list won't matter if not exact match; we keep one exact match to ensure false
 
     }
+
+    @Test
+    @DisplayName("generatePassword isValid: true when generated password isValid")
+    void generatePassword_isValid_WhenCheckedAgainstValidator() {
+        String pw = validator.generatePasswordValidPassword();
+        assertTrue(validator.isValid(pw));
+    }
+
+
 }
