@@ -124,9 +124,7 @@ public final class PasswordValidator implements PasswordValidatorSpec {
         if (!containsSpecialChar(password)) return false;
 
         // Must not be a common password
-        if (isCommonPassword(password)) return false;
-
-        return true;
+        return !isCommonPassword(password);
     }
 
     // Internal helpers for individual case checks when policies are partially enabled
@@ -146,7 +144,7 @@ public final class PasswordValidator implements PasswordValidatorSpec {
         return false;
     }
 
-    public String generatePasswordValidPassword() {
+    public String generateValidPassword() {
         return passwordGenerator.generatePassword();
     }
 

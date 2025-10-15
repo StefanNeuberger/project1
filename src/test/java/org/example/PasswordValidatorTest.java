@@ -2,6 +2,10 @@ package org.example;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -17,94 +21,90 @@ class PasswordValidatorTest {
     private final PasswordValidator validator = new PasswordValidator(minLength, allowedSpecialChars, needsUppercase, needsDigits, needsLowercase);
 
     // hasMinLength
-    @Test
+    @ParameterizedTest
     @DisplayName("hasMinLength: returns true for length >= 8")
-    void hasMinLength_returnsTrue_whenLengthAtLeast8() {
-        assertTrue(validator.hasMinLength("TESTINGT")); // exactly 8
-        assertTrue(validator.hasMinLength("Testing-123")); // > 8
+    @ValueSource(strings = {"TESTINGT", "Testing-123"})
+    void hasMinLength_returnsTrue_whenLengthAtLeast8(String input) {
+        assertTrue(validator.hasMinLength(input));
     }
 
-    @Test
+    @ParameterizedTest
     @DisplayName("hasMinLength: returns false for length < 8")
-    void hasMinLength_returnsFalse_whenTooShort() {
-        assertFalse(validator.hasMinLength("short"));
-        assertFalse(validator.hasMinLength("1234567"));
+    @ValueSource(strings = {"short", "1234567"})
+    void hasMinLength_returnsFalse_whenTooShort(String input) {
+        assertFalse(validator.hasMinLength(input));
     }
 
-    @Test
+    @ParameterizedTest
     @DisplayName("hasMinLength: returns false for null and empty")
-    void hasMinLength_returnsFalse_whenCalledWithNullOrEmptyString() {
-        assertFalse(validator.hasMinLength(null));
-        assertFalse(validator.hasMinLength(""));
+    @NullAndEmptySource
+    void hasMinLength_returnsFalse_whenCalledWithNullOrEmptyString(String input) {
+        assertFalse(validator.hasMinLength(input));
     }
 
     // containsDigit
-    @Test
+    @ParameterizedTest
     @DisplayName("containsDigit: detects presence of digit")
-    void containsDigit_true_cases() {
-        assertTrue(validator.containsDigit("a1"));
-        assertTrue(validator.containsDigit("0abc"));
-        assertTrue(validator.containsDigit("abc9xyz"));
+    @ValueSource(strings = {"a1", "0abc", "abc9xyz"})
+    void containsDigit_true_cases(String input) {
+        assertTrue(validator.containsDigit(input));
     }
 
-    @Test
+    @ParameterizedTest
     @DisplayName("containsDigit: returns false when no digits")
-    void containsDigit_false_cases() {
-        assertFalse(validator.containsDigit("abcXYZ!"));
-        assertFalse(validator.containsDigit(""));
-        assertFalse(validator.containsDigit(null));
+    @NullAndEmptySource
+    @ValueSource(strings = {"abcXYZ!"})
+    void containsDigit_false_cases(String input) {
+        assertFalse(validator.containsDigit(input));
     }
 
     // containsUpperAndLower
-    @Test
+    @ParameterizedTest
     @DisplayName("containsUpperAndLower: true when both present")
-    void containsUpperAndLower_true_cases() {
-        assertTrue(validator.containsUpperAndLower("Ab"));
-        assertTrue(validator.containsUpperAndLower("PassWord"));
-        assertTrue(validator.containsUpperAndLower("aB1"));
+    @ValueSource(strings = {"Ab", "PassWord", "aB1"})
+    void containsUpperAndLower_true_cases(String input) {
+        assertTrue(validator.containsUpperAndLower(input));
     }
 
-    @Test
+    @ParameterizedTest
     @DisplayName("containsUpperAndLower: false when only one case or none")
-    void containsUpperAndLower_false_cases() {
-        assertFalse(validator.containsUpperAndLower("abc"));
-        assertFalse(validator.containsUpperAndLower("ABC"));
-        assertFalse(validator.containsUpperAndLower("1234"));
-        assertFalse(validator.containsUpperAndLower(""));
-        assertFalse(validator.containsUpperAndLower(null));
+    @NullAndEmptySource
+    @ValueSource(strings = {"abc", "ABC", "1234"})
+    void containsUpperAndLower_false_cases(String input) {
+        assertFalse(validator.containsUpperAndLower(input));
     }
 
     // isCommonPassword
-    @Test
+    @ParameterizedTest
     @DisplayName("isCommonPassword: true for known common entries (case-insensitive)")
-    void isCommonPassword_true_cases() {
-        assertTrue(validator.isCommonPassword("password"));
-        assertTrue(validator.isCommonPassword("PASSWORD"));
-        assertTrue(validator.isCommonPassword("123456"));
+    @ValueSource(strings = {"password", "PASSWORD", "123456"})
+    void isCommonPassword_true_cases(String input) {
+        assertTrue(validator.isCommonPassword(input));
     }
 
-    @Test
+    @ParameterizedTest
     @DisplayName("isCommonPassword: false for uncommon or null")
-    void isCommonPassword_false_cases() {
-        assertFalse(validator.isCommonPassword("notcommon123!"));
+    @NullSource
+    @ValueSource(strings = {"notcommon123!"})
+    void isCommonPassword_false_cases(String input) {
+        assertFalse(validator.isCommonPassword(input));
     }
 
 
     // containsSpecialChar
-    @Test
+    @ParameterizedTest
     @DisplayName("containsSpecialChar: true when default allowed special present")
-    void containsSpecialChar_true_cases() {
-        assertTrue(validator.containsSpecialChar("abc$def"));
-        assertTrue(validator.containsSpecialChar("x@y"));
-        assertTrue(validator.containsSpecialChar("test#case"));
+    @ValueSource(strings = {"abc$def", "x@y", "test#case"})
+    void containsSpecialChar_true_cases(String input) {
+        assertTrue(validator.containsSpecialChar(input));
     }
 
-    @Test
+    @ParameterizedTest
     @DisplayName("containsSpecialChar: false when no default specials present or bad inputs")
-    void containsSpecialChar_ReturnFalse_WhenCalledWithFalseCases() {
-        assertFalse(validator.containsSpecialChar("abcdef"));
-        assertFalse(validator.containsSpecialChar(""));
-        assertFalse(validator.containsSpecialChar(null));
+    @NullAndEmptySource
+    @ValueSource(strings = {"abcdef"})
+    void containsSpecialChar_ReturnFalse_WhenCalledWithFalseCases(String input) {
+        assertFalse(validator.containsSpecialChar(input));
     }
 
     // isValid
@@ -116,8 +116,9 @@ class PasswordValidatorTest {
         assertTrue(validator.isValid("Aa1$aaaa"));
     }
 
-    @Test
+    @ParameterizedTest
     @DisplayName("isValid: false when failing individual conditions")
+    @ValueSource(strings = {"short1!", "NoDigits!!", "UPPERCASE1!", "NoSpecial1"})
     void isValid_ReturnsFalse_WhenCalledWithFalseCases() {
         assertFalse(validator.isValid(null)); // null
         assertFalse(validator.isValid("Short1!")); // too short (<8)
@@ -125,15 +126,18 @@ class PasswordValidatorTest {
         assertFalse(validator.isValid("lowercase1!")); // no upper
         assertFalse(validator.isValid("UPPERCASE1!")); // no lower
         assertFalse(validator.isValid("NoSpecial1")); // no special
-        assertFalse(validator.isValid("password1")); // common base (password) considered common? 'password1' is in list
-        assertTrue(validator.isValid("Password1$")); // common password variant exact match 'password1' + different special not in list won't matter if not exact match; we keep one exact match to ensure false
 
+    }
+
+    @Test
+    void isValid_ReturnsFalse_WhenCalledWithNull() {
+        assertFalse(validator.isValid(null));
     }
 
     @Test
     @DisplayName("generatePassword isValid: true when generated password isValid")
     void generatePassword_isValid_WhenCheckedAgainstValidator() {
-        String pw = validator.generatePasswordValidPassword();
+        String pw = validator.generateValidPassword();
         assertTrue(validator.isValid(pw));
     }
 
