@@ -4,12 +4,12 @@ Ein kleines Java/Maven-Projekt mit Passwort-Validierung und -Generierung.
 
 ## Ziel & Abgabe
 
-- JDK 17 (oder höher). Das Projekt verwendet den Maven Compiler mit `release 17`.
+- JDK 21 (oder höher). Das Projekt verwendet den Maven Compiler mit `release 21`.
 - Apache Maven 3.8+.
 
 ## Voraussetzungen
 
-- JDK 17 (oder höher). Das Projekt verwendet den Maven Compiler mit `release 17`.
+- JDK 21 (oder höher). Das Projekt verwendet den Maven Compiler mit `release 21`.
 - Apache Maven 3.8+.
 
 Optional, aber empfohlen:
@@ -33,14 +33,10 @@ Artefakte:
 
 Es gibt eine Main-Klasse `org.example.Main`, die ein Passwort von STDIN einliest und prüft, ob es gültig ist.
 
-Wähle eine der folgenden Möglichkeiten:
-
-1) Ohne zusätzliche Plugins (direkt über die kompilierten Klassen):
-
-- Kompilieren (ggf. ohne Tests): `mvn -q -DskipTests compile`
+- Kompilieren (ggf. ohne Tests): `mvn -q -DskipTests compile` oder `mvn compile`
 - Starten:
-    - `java -cp target/classes org.example.Main` oder
-    - `mvn exec:java -Dexec.mainClass="org.example.Main"`
+    - `mvn exec:java`
+    - Hinweis: Um Tests beim Start zu überspringen, kann `mvn -DskipTests exec:java` verwendet werden.
 
 Bei Start erscheint eine Eingabeaufforderung:
 
