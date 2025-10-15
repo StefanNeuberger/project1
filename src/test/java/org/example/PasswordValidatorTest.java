@@ -8,26 +8,29 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PasswordValidatorTest {
 
-    private final PasswordValidator validator = new PasswordValidator();
+    final int minLength = 8;
+    final String allowedSpecialChars = "!@#$%^&*()_+-=[]{}|;:'\"`,.<>/?~\\";
+
+    private final PasswordValidator validator = new PasswordValidator(minLength, allowedSpecialChars);
 
     // hasMinLength
     @Test
     @DisplayName("hasMinLength: returns true for length >= 8")
-    void hasMinLength_true_whenLengthAtLeast8() {
+    void hasMinLength_returnsTrue_whenLengthAtLeast8() {
         assertTrue(validator.hasMinLength("TESTINGT")); // exactly 8
         assertTrue(validator.hasMinLength("Testing-123")); // > 8
     }
 
     @Test
     @DisplayName("hasMinLength: returns false for length < 8")
-    void hasMinLength_false_whenTooShort() {
+    void hasMinLength_returnsFalse_whenTooShort() {
         assertFalse(validator.hasMinLength("short"));
         assertFalse(validator.hasMinLength("1234567"));
     }
 
     @Test
     @DisplayName("hasMinLength: returns false for null and empty")
-    void hasMinLength_handlesNullAndEmpty() {
+    void hasMinLength_returnsFalse_whenCalledWithNullOrEmptyString() {
         assertFalse(validator.hasMinLength(null));
         assertFalse(validator.hasMinLength(""));
     }
@@ -95,7 +98,7 @@ class PasswordValidatorTest {
 
     @Test
     @DisplayName("containsSpecialChar: false when no default specials present or bad inputs")
-    void containsSpecialChar_false_cases() {
+    void containsSpecialChar_ReturnFalse_WhenCalledWithFalseCases() {
         assertFalse(validator.containsSpecialChar("abcdef"));
         assertFalse(validator.containsSpecialChar(""));
         assertFalse(validator.containsSpecialChar(null));
@@ -104,7 +107,7 @@ class PasswordValidatorTest {
     // isValid
     @Test
     @DisplayName("isValid: true when all conditions met")
-    void isValid_true_case() {
+    void isValid_ReturnsTrue_WhenCalledWithTrueCases() {
         // >=8, has digit, has upper and lower, has special from default set, not common
         assertTrue(validator.isValid("GoodPass1!"));
         assertTrue(validator.isValid("Aa1$aaaa"));
@@ -112,7 +115,7 @@ class PasswordValidatorTest {
 
     @Test
     @DisplayName("isValid: false when failing individual conditions")
-    void isValid_false_cases() {
+    void isValid_ReturnsFalse_WhenCalledWithFalseCases() {
         assertFalse(validator.isValid(null)); // null
         assertFalse(validator.isValid("Short1!")); // too short (<8)
         assertFalse(validator.isValid("NoDigits!!")); // no digit

@@ -9,7 +9,14 @@ import java.util.Set;
  */
 public final class PasswordValidator implements PasswordValidatorSpec {
 
-    private static final int DEFAULT_MIN_LENGTH = 8;
+    private final int minLength;
+    private final String allowedSpecialChars;
+
+    // Constructor
+    public PasswordValidator(int minLength, String allowedSpecialChars) {
+        this.minLength = minLength;
+        this.allowedSpecialChars = allowedSpecialChars;
+    }
 
     // Small internal list of common passwords
     private static final Set<String> COMMON_PASSWORDS = Set.of(
@@ -17,15 +24,17 @@ public final class PasswordValidator implements PasswordValidatorSpec {
             "password1", "12345678", "12345", "iloveyou"
     );
 
-    // Default allowed special characters used by isValid
-    private static final String DEFAULT_ALLOWED_SPECIALS = "!@#$%^&*()_+-=[]{}|;:'\"`,.<>/?~\\";
 
     @Override
     public boolean hasMinLength(String password) {
         if (password == null) return false;
-        return password.length() >= DEFAULT_MIN_LENGTH;
+        return password.length() >= this.minLength;
     }
 
+    /**
+     * Detects presence of digit in password.
+     * returnValue: true if at least one digit is present, false otherwise.
+     */
     @Override
     public boolean containsDigit(String password) {
         if (password == null || password.isEmpty()) return false;
@@ -36,6 +45,10 @@ public final class PasswordValidator implements PasswordValidatorSpec {
         return false;
     }
 
+    /**
+     * Detects presence of upper and lower case letters in password.
+     * returnValue: true if at least one upper and lower case letter is present, false otherwise.
+     */
     @Override
     public boolean containsUpperAndLower(String password) {
         if (password == null || password.isEmpty()) return false;
@@ -50,6 +63,10 @@ public final class PasswordValidator implements PasswordValidatorSpec {
         return false;
     }
 
+    /**
+     * Detects presence of common password in password.
+     * returnValue: true if password is in the small internal list, false otherwise.
+     */
     @Override
     public boolean isCommonPassword(String password) {
         if (password == null) return false;
@@ -58,15 +75,22 @@ public final class PasswordValidator implements PasswordValidatorSpec {
         return COMMON_PASSWORDS.contains(normalized);
     }
 
+    /**
+     * Detects presence of special character in password.
+     * returnValue: true if at least one special character is present, false otherwise.
+     */
     @Override
     public boolean containsSpecialChar(String password) {
         if (password == null || password.isEmpty()) return false;
         for (int i = 0; i < password.length(); i++) {
-            if (DEFAULT_ALLOWED_SPECIALS.indexOf(password.charAt(i)) >= 0) return true;
+            if (allowedSpecialChars.indexOf(password.charAt(i)) >= 0) return true;
         }
         return false;
     }
 
+    /**
+     * Returns true if all conditions are met, false otherwise.
+     */
     @Override
     public boolean isValid(String password) {
         if (password == null) return false;
