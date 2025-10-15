@@ -9,14 +9,24 @@ import java.util.Set;
  */
 public final class PasswordValidator implements PasswordValidatorSpec {
 
+    private final boolean needsUppercase;
+    private final boolean needsDigits;
+    private final boolean needsLowercase;
+
     private final int minLength;
     private final String allowedSpecialChars;
+    private final PasswordGenerator passwordGenerator;
 
     // Constructor
-    public PasswordValidator(int minLength, String allowedSpecialChars) {
+    public PasswordValidator(int minLength, String allowedSpecialChars, boolean needsUppercase, boolean needsDigits, boolean needsLowercase) {
         this.minLength = minLength;
         this.allowedSpecialChars = allowedSpecialChars;
+        this.needsUppercase = needsUppercase;
+        this.needsDigits = needsDigits;
+        this.needsLowercase = needsLowercase;
+        this.passwordGenerator = new PasswordGenerator(minLength, allowedSpecialChars, needsUppercase, needsDigits, needsLowercase);
     }
+
 
     // Small internal list of common passwords
     private static final Set<String> COMMON_PASSWORDS = Set.of(
@@ -94,10 +104,55 @@ public final class PasswordValidator implements PasswordValidatorSpec {
     @Override
     public boolean isValid(String password) {
         if (password == null) return false;
-        return hasMinLength(password)
-                && containsDigit(password)
-                && containsUpperAndLower(password)
-                && containsSpecialChar(password)
-                && !isCommonPassword(password);
+
+        // Always enforce minimum length first
+        if (!hasMinLength(password)) return false;
+
+        // Conditionally enforce digit requirement
+        if (this.needsDigits && !containsDigit(password)) return false;
+
+        // Conditionally enforce upper/lower requirements
+        if (this.needsUppercase && this.needsLowercase) {
+            if (!containsUpperAndLower(password)) return false;
+        } else if (this.needsUppercase) {
+            if (!containsUppercase(password)) return false;
+        } else if (this.needsLowercase) {
+            if (!containsLowercase(password)) return false;
+        }
+
+        // Always require at least one allowed special character
+        if (!containsSpecialChar(password)) return false;
+
+        // Must not be a common password
+        if (isCommonPassword(password)) return false;
+
+        return true;
     }
+
+    // Internal helpers for individual case checks when policies are partially enabled
+    private boolean containsUppercase(String password) {
+        if (password == null || password.isEmpty()) return false;
+        for (int i = 0; i < password.length(); i++) {
+            if (Character.isUpperCase(password.charAt(i))) return true;
+        }
+        return false;
+    }
+
+    private boolean containsLowercase(String password) {
+        if (password == null || password.isEmpty()) return false;
+        for (int i = 0; i < password.length(); i++) {
+            if (Character.isLowerCase(password.charAt(i))) return true;
+        }
+        return false;
+    }
+
+    public String generatePasswordValidPassword() {
+        return passwordGenerator.generatePassword();
+    }
+
+    // Expose the generator used by this validator (if needed by callers)
+    public PasswordGenerator getPasswordGenerator() {
+        return passwordGenerator;
+    }
+
 }
