@@ -1,4 +1,6 @@
 package org.stefanneuberger.OrderListRepo;
 
-public record Order() {
+import org.stefanneuberger.productRepo.Product;
+
+public record Order(int id, Product product, int quantity) {
 }
