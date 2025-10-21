@@ -31,7 +31,7 @@ Artefakte:
 
 ## Ausführen (Run)
 
-Es gibt eine Main-Klasse `org.example.Main`, die ein Passwort von STDIN einliest und prüft, ob es gültig ist.
+Es gibt eine Main-Klasse `org.stefanneuberger.Main`, die ein Passwort von STDIN einliest und prüft, ob es gültig ist.
 
 - Kompilieren (ggf. ohne Tests): `mvn -q -DskipTests compile` oder `mvn compile`
 - Starten:
