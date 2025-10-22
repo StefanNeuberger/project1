@@ -1,17 +1,31 @@
 package org.stefanneuberger.OrderListRepo;
 
+import org.stefanneuberger.productRepo.Product;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class OrderListRepo {
+public class OrderListRepo implements OrderRepoSpec {
 
-    private final List<Order> orders;
+    private final List<Order> orders = new ArrayList<>();
 
-    public OrderListRepo(List<Order> orders) {
-        this.orders = orders;
+    public OrderListRepo() {
     }
 
-    public void addOrder(Order order) {
+    public OrderListRepo(List<Order> orders) {
+        this.orders.addAll(orders);
+    }
+
+    public int getNextId() {
+        return orders.stream()
+                .mapToInt(Order::id)
+                .max()
+                .orElse(0) + 1;
+    }
+
+    public void addOrder(Product product, int quantity) {
+        Order order = new Order(getNextId(), product, quantity);
         // make sure there are no duplicate orders
         Order existingOrder = getOrderByProductId(order.product().id());
         if (existingOrder != null) {
@@ -20,6 +34,12 @@ public class OrderListRepo {
         }
         orders.add(order);
     }
+
+    @Override
+    public void addOrder(Order order) {
+        orders.add(order);
+    }
+
 
     public void removeAllOrders() {
         orders.clear();
@@ -69,6 +89,11 @@ public class OrderListRepo {
         if (o == null || getClass() != o.getClass()) return false;
         OrderListRepo that = (OrderListRepo) o;
         return Objects.equals(orders, that.orders);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(orders);
     }
 
 }
