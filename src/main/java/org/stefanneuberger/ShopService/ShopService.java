@@ -49,7 +49,7 @@ public class ShopService {
         this.orderList = new OrderListRepo(shopOrders);
     }
 
-    public void createOrder(Product product, int quantity) {
+    public Order createOrder(Product product, int quantity) {
         if (product == null) {
             throw new IllegalArgumentException("Product cannot be null");
         }
@@ -59,8 +59,9 @@ public class ShopService {
         if (productRepo.getProductById(product.id()) == null) {
             throw new IllegalArgumentException("Product does not exist");
         }
-        orderList.addOrder(product, quantity);
+        return orderList.addOrder(product, quantity);    
     }
+
 
     public void deleteOrder(int orderId) {
         if (orderId <= 0) {
