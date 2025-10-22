@@ -42,6 +42,11 @@ public class ShopCLI {
 
         System.out.println(Ansi.ansi().fg(Ansi.Color.CYAN).a("🛒 " + shopService.getShopName() + " - Product Selection").reset());
         System.out.println(Ansi.ansi().fg(Ansi.Color.YELLOW).a("Enter product number to select, 'q' to quit").reset());
+        
+        // Show warehouse info if available
+        if (shopService.getWarehouse() != null) {
+            System.out.println(Ansi.ansi().fg(Ansi.Color.BLUE).a("📦 Warehouse: " + shopService.getWarehouse().getWarehouseName()).reset());
+        }
         System.out.println();
 
         List<Product> products = shopService.getProductRepo().getProducts();
@@ -53,9 +58,25 @@ public class ShopCLI {
 
         for (int i = 0; i < products.size(); i++) {
             Product product = products.get(i);
-            String productLine = String.format("%d. %s - %s €",
-                    i + 1, product.name(), product.price());
-            System.out.println(Ansi.ansi().fg(Ansi.Color.WHITE).a(productLine).reset());
+            int stockLevel = shopService.getWarehouse() != null ? 
+                shopService.getWarehouse().getStockLevel(product.id()) : 0;
+            
+            String stockStatus;
+            if (stockLevel > 0) {
+                stockStatus = String.format("(%d in stock)", stockLevel);
+            } else {
+                stockStatus = "(Out of stock)";
+            }
+            
+            String productLine = String.format("%d. %s - %s € %s",
+                    i + 1, product.name(), product.price(), stockStatus);
+            
+            // Color code based on stock availability
+            if (stockLevel > 0) {
+                System.out.println(Ansi.ansi().fg(Ansi.Color.WHITE).a(productLine).reset());
+            } else {
+                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a(productLine).reset());
+            }
         }
 
         System.out.println();
@@ -76,6 +97,16 @@ public class ShopCLI {
         try {
             int productNumber = Integer.parseInt(input);
             if (productNumber >= 1 && productNumber <= shopService.getProductRepo().getProducts().size()) {
+                Product selectedProduct = shopService.getProductRepo().getProducts().get(productNumber - 1);
+                
+                // Check if product is in stock
+                if (shopService.getWarehouse() != null && 
+                    !shopService.getWarehouse().isInStock(selectedProduct.id())) {
+                    System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a("This product is out of stock!").reset());
+                    pause();
+                    return;
+                }
+                
                 selectProduct(productNumber - 1);
             } else {
                 System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a("Invalid product number!").reset());
