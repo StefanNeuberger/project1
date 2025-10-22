@@ -67,11 +67,10 @@ Das Programm simuliert einen Online-Shop mit integrierter Lagerverwaltung. Es be
 
 ### Technische Details
 
-- **Java 17+** mit modernen Features (Records, BigDecimal)
+- **Java 17+**
 - **Maven** als Build-Tool
 - **ANSI-Farben** für verbesserte Benutzererfahrung
-- **Exception-Handling** für robuste Fehlerbehandlung
-- **Repository-Pattern** für Datenverwaltung
+
 
 ### Verwendung
 
