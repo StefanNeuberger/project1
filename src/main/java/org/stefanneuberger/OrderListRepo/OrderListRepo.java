@@ -3,7 +3,13 @@ package org.stefanneuberger.OrderListRepo;
 import java.util.List;
 import java.util.Objects;
 
-public record OrderListRepo(List<Order> orders) {
+public class OrderListRepo {
+
+    private final List<Order> orders;
+
+    public OrderListRepo(List<Order> orders) {
+        this.orders = orders;
+    }
 
     public void addOrder(Order order) {
         // make sure there are no duplicate orders
@@ -40,6 +46,15 @@ public record OrderListRepo(List<Order> orders) {
                 .filter(o -> o.product().id() == productId)
                 .findFirst()
                 .orElse(null);
+    }
+
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders.clear();
+        this.orders.addAll(orders);
     }
 
     @Override
