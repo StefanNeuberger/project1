@@ -24,15 +24,16 @@ public class OrderListRepo implements OrderRepoSpec {
                 .orElse(0) + 1;
     }
 
-    public void addOrder(Product product, int quantity) {
+    public Order addOrder(Product product, int quantity) {
         Order order = new Order(getNextId(), product, quantity);
         // make sure there are no duplicate orders
         Order existingOrder = getOrderByProductId(order.product().id());
         if (existingOrder != null) {
             updateOrder(order);
-            return;
+            return order;
         }
         orders.add(order);
+        return order;
     }
 
     @Override
