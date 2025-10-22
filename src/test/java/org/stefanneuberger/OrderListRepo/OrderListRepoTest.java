@@ -35,19 +35,19 @@ class OrderListRepoTest {
         initialOrders.add(o1);
         initialOrders.add(o2);
         initialOrders.add(o3);
-        orderListRepo = new OrderListRepo(new ArrayList<>(initialOrders));
+        orderListRepo = new OrderListRepo(initialOrders);
     }
 
     @Test
     @DisplayName("addOrder should add a new order to the list when no order with the same product present")
     void addOrder_addsNewOrderWhenProductNotPresent() {
-        int initialSize = orderListRepo.orders().size();
+        int initialSize = orderListRepo.getOrders().size();
         Product p4 = new Product(4, "Ergo Stand", new BigDecimal("59.00"));
         Order newOrder = new Order(104, p4, 5);
 
         orderListRepo.addOrder(newOrder);
 
-        assertEquals(initialSize + 1, orderListRepo.orders().size());
+        assertEquals(initialSize + 1, orderListRepo.getOrders().size());
         assertEquals(newOrder, orderListRepo.getOrderById(104));
         assertEquals(newOrder, orderListRepo.getOrderByProductId(4));
     }
@@ -55,14 +55,14 @@ class OrderListRepoTest {
     @Test
     @DisplayName("addOrder should replace an existing order with the same product id when the order id is different")
     void addOrder_updatesExistingWhenSameProductId() {
-        int initialSize = orderListRepo.orders().size();
+        int initialSize = orderListRepo.getOrders().size();
         // Same product as p2, but different order id and quantity
         Order updatedOrderForP2 = new Order(202, p2, 7);
 
         orderListRepo.addOrder(updatedOrderForP2);
 
         // Should not create a duplicate for product id=2
-        assertEquals(initialSize, orderListRepo.orders().size(), "Should replace, not add duplicate for same product id");
+        assertEquals(initialSize, orderListRepo.getOrders().size(), "Should replace, not add duplicate for same product id");
         Order fetchedByProduct = orderListRepo.getOrderByProductId(2);
         assertNotNull(fetchedByProduct);
         assertEquals(202, fetchedByProduct.id());
@@ -74,9 +74,9 @@ class OrderListRepoTest {
     @Test
     @DisplayName("removeAllOrders should clear the list of orders")
     void removeAllOrders_clearsTheRepository() {
-        assertFalse(orderListRepo.orders().isEmpty());
+        assertFalse(orderListRepo.getOrders().isEmpty());
         orderListRepo.removeAllOrders();
-        assertTrue(orderListRepo.orders().isEmpty());
+        assertTrue(orderListRepo.getOrders().isEmpty());
         assertNull(orderListRepo.getOrderById(101));
         assertNull(orderListRepo.getOrderByProductId(1));
     }
@@ -84,11 +84,11 @@ class OrderListRepoTest {
     @Test
     @DisplayName("removeOrderById should remove the order with the given id")
     void removeOrderById_removesOnlyMatchingId() {
-        int initialSize = orderListRepo.orders().size();
+        int initialSize = orderListRepo.getOrders().size();
 
         orderListRepo.removeOrderById(101);
 
-        assertEquals(initialSize - 1, orderListRepo.orders().size());
+        assertEquals(initialSize - 1, orderListRepo.getOrders().size());
         assertNull(orderListRepo.getOrderById(101));
         // Others remain
         assertNotNull(orderListRepo.getOrderById(102));
@@ -107,7 +107,7 @@ class OrderListRepoTest {
         assertNotNull(fetched);
         assertEquals(9, fetched.quantity());
         // Size should remain same
-        assertEquals(initialOrders.size(), orderListRepo.orders().size());
+        assertEquals(initialOrders.size(), orderListRepo.getOrders().size());
     }
 
     @Test
@@ -125,7 +125,7 @@ class OrderListRepoTest {
         assertEquals(999, fetchedByProduct.id());
         assertEquals(4, fetchedByProduct.quantity());
         // Count unchanged
-        assertEquals(initialOrders.size(), orderListRepo.orders().size());
+        assertEquals(initialOrders.size(), orderListRepo.getOrders().size());
     }
 
     @Test
