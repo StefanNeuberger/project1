@@ -37,6 +37,27 @@ public class Warehouse {
         return stock.getOrDefault(productId, 0) > 0;
     }
 
+    public boolean increaseStock(int productId, int quantity) {
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Quantity must be greater than zero");
+        }
+        int currentStock = stock.getOrDefault(productId, 0);
+        stock.put(productId, currentStock + quantity);
+        return true;
+    }
+
+    public boolean decreaseStock(int productId, int quantity) {
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Quantity must be greater than zero");
+        }
+        int currentStock = stock.getOrDefault(productId, 0);
+        if (currentStock < quantity) {
+            throw new IllegalArgumentException("Insufficient stock");
+        }
+        stock.put(productId, currentStock - quantity);
+        return true;
+    }
+
     public void updateStock(int productId, int newStock) {
         if (newStock < 0) {
             throw new IllegalArgumentException("Stock cannot be negative");
