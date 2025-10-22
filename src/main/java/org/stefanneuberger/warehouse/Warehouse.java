@@ -4,6 +4,7 @@ import org.stefanneuberger.productRepo.Product;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class Warehouse {
     private final Map<Integer, Integer> stock = new HashMap<>();
@@ -73,5 +74,17 @@ public class Warehouse {
     public String toString() {
         return String.format("Warehouse{id=%d, name='%s', items=%d}",
                 warehouseId, warehouseName, stock.size());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Warehouse warehouse = (Warehouse) o;
+        return warehouseId == warehouse.warehouseId && Objects.equals(stock, warehouse.stock) && Objects.equals(warehouseName, warehouse.warehouseName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(stock, warehouseName, warehouseId);
     }
 }
