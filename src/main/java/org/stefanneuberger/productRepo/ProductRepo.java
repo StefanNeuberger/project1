@@ -1,13 +1,17 @@
 package org.stefanneuberger.productRepo;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class ProductRepo {
-    private List<Product> products;
+    private List<Product> products = new ArrayList<Product>();
+
+    public ProductRepo() {
+    }
 
     public ProductRepo(List<Product> products) {
-        this.products = products;
+        this.products = new ArrayList<>(products);
     }
 
     public List<Product> getProducts() {
