@@ -6,7 +6,6 @@ import org.stefanneuberger.OrderListRepo.Order;
 import org.stefanneuberger.ShopService.ShopService;
 import org.stefanneuberger.productRepo.Product;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Scanner;
 
@@ -154,7 +153,7 @@ public class ShopCLI {
                 order.product().name(),
                 order.quantity(),
                 order.product().price(),
-                order.product().price().multiply(BigDecimal.valueOf(order.quantity()))
+                order.totalPrice()
         );
 
         String[] lines = orderDetails.split("\n");
