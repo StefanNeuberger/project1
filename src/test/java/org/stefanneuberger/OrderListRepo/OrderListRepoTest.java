@@ -21,6 +21,9 @@ class OrderListRepoTest {
 
     @BeforeEach
     void setUp() {
+        // Initialize repository
+        orderListRepo = new OrderListRepo();
+
         // Products
         p1 = new Product(1, "keyboard ZSA voyager", new BigDecimal("123.98"));
         p2 = new Product(2, "Mini Mouse", new BigDecimal("22.98"));
@@ -35,7 +38,7 @@ class OrderListRepoTest {
         initialOrders.add(o1);
         initialOrders.add(o2);
         initialOrders.add(o3);
-        orderListRepo = new OrderListRepo(initialOrders);
+        orderListRepo.setOrders(initialOrders);
     }
 
     @Test
@@ -43,29 +46,27 @@ class OrderListRepoTest {
     void addOrder_addsNewOrderWhenProductNotPresent() {
         int initialSize = orderListRepo.getOrders().size();
         Product p4 = new Product(4, "Ergo Stand", new BigDecimal("59.00"));
-        Order newOrder = new Order(104, p4, 5);
 
-        orderListRepo.addOrder(newOrder);
+        orderListRepo.addOrder(p4, 5);
 
         assertEquals(initialSize + 1, orderListRepo.getOrders().size());
-        assertEquals(newOrder, orderListRepo.getOrderById(104));
-        assertEquals(newOrder, orderListRepo.getOrderByProductId(4));
+        Order fetched = orderListRepo.getOrderByProductId(4);
+        assertNotNull(fetched);
+        assertEquals(4, fetched.product().id());
+        assertEquals(5, fetched.quantity());
     }
 
     @Test
     @DisplayName("addOrder should replace an existing order with the same product id when the order id is different")
     void addOrder_updatesExistingWhenSameProductId() {
         int initialSize = orderListRepo.getOrders().size();
-        // Same product as p2, but different order id and quantity
-        Order updatedOrderForP2 = new Order(202, p2, 7);
-
-        orderListRepo.addOrder(updatedOrderForP2);
+        // Same product as p2, but different quantity; repo will generate a new id
+        orderListRepo.addOrder(p2, 7);
 
         // Should not create a duplicate for product id=2
         assertEquals(initialSize, orderListRepo.getOrders().size(), "Should replace, not add duplicate for same product id");
         Order fetchedByProduct = orderListRepo.getOrderByProductId(2);
         assertNotNull(fetchedByProduct);
-        assertEquals(202, fetchedByProduct.id());
         assertEquals(7, fetchedByProduct.quantity());
         // Old order with id 102 should be gone
         assertNull(orderListRepo.getOrderById(102));
