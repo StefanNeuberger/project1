@@ -4,6 +4,7 @@ import org.stefanneuberger.OrderListRepo.Order;
 import org.stefanneuberger.OrderListRepo.OrderListRepo;
 import org.stefanneuberger.productRepo.Product;
 import org.stefanneuberger.productRepo.ProductRepo;
+import org.stefanneuberger.warehouse.Warehouse;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ public class ShopService {
     private final String shopName;
     private OrderListRepo orderList = new OrderListRepo();
     private ProductRepo productRepo;
+    private Warehouse warehouse;
 
     public ShopService(int shopId, String shopName) {
         this.shopId = shopId;
@@ -23,6 +25,13 @@ public class ShopService {
         this.shopId = shopId;
         this.shopName = shopName;
         this.productRepo = new ProductRepo(initialProducts);
+    }
+
+    public ShopService(int shopId, String shopName, Warehouse warehouse, List<Product> allProducts) {
+        this.shopId = shopId;
+        this.shopName = shopName;
+        this.warehouse = warehouse;
+        this.productRepo = new ProductRepo(allProducts);
     }
 
     public int getShopId() {
@@ -39,6 +48,14 @@ public class ShopService {
 
     public void setProductRepo(ProductRepo productRepo) {
         this.productRepo = productRepo;
+    }
+
+    public Warehouse getWarehouse() {
+        return warehouse;
+    }
+
+    public void setWarehouse(Warehouse warehouse) {
+        this.warehouse = warehouse;
     }
 
     public OrderListRepo getShopOrders() {
@@ -59,6 +76,20 @@ public class ShopService {
         if (productRepo.getProductById(product.id()) == null) {
             throw new IllegalArgumentException("Product does not exist");
         }
+        
+        // Check warehouse stock if warehouse is available
+        if (warehouse != null) {
+            int currentStock = warehouse.getStockLevel(product.id());
+            if (currentStock < quantity) {
+                throw new IllegalArgumentException(
+                    String.format("Insufficient stock. Available: %d, Requested: %d",
+                        currentStock, quantity)
+                );
+            }
+            // Update the stock by reducing it
+            warehouse.updateStock(product.id(), currentStock - quantity);
+        }
+        
         return orderList.addOrder(product, quantity);    
     }
 
